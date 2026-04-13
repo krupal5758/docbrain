@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0b0f1a;
+  --color-bg-surface: #111827;
+  --color-bg-surface-light: #1c2534;
+  --color-text-primary: #f1f5f9;
+  --color-text-muted: #64748b;
+  --color-accent-green: #10b981;
+  --color-accent-indigo: #6366f1;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #f43f5e;
+  --color-accent-cyan: #06b6d4;
+  --color-border: #1e2d3d;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background-color: #0b0f1a;
+  color: #f1f5f9;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e2d3d; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #2d3f55; }
+
+/* React Flow controls */
+.react-flow__controls-button {
+  background: #111827 !important;
+  border-color: #1e2d3d !important;
+  color: #64748b !important;
+}
+.react-flow__controls-button:hover {
+  background: #1c2534 !important;
+  color: #f1f5f9 !important;
+}
+.react-flow__attribution { display: none !important; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeup { animation: fadeUp 0.2s ease-out; }
