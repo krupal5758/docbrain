@@ -5,9 +5,14 @@ export default function CopyButton({ text, className = "" }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      // Clipboard API can reject (permissions, insecure context). Don't crash.
+      console.warn("Copy to clipboard failed:", e);
+    }
   }
 
   return (

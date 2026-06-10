@@ -29,6 +29,9 @@ export function useChat() {
         if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
         }
+        if (!response.body) {
+          throw new Error("The server returned an empty response.");
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -61,7 +64,9 @@ export function useChat() {
               } else if (parsed.type === "error") {
                 setError(parsed.message);
               }
-            } catch {}
+            } catch (e) {
+              console.warn("Failed to parse SSE line:", line, e);
+            }
           }
         }
       } catch (err) {

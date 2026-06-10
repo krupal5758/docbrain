@@ -11,7 +11,7 @@ router.post("/", validateAnalysisInput, async (req, res, next) => {
     const result = await analyzeDocument(text, analysisType, options);
     res.json(result);
   } catch (err) {
-    console.error("[analyze error]", err.message, err.status, JSON.stringify(err));
+    console.error("[analyze error]", err.status || "", err.message);
     if (err.status === 429 || err.message?.includes("429") || err.message?.includes("quota")) {
       return res.status(429).json({
         error: { message: "API rate limit reached. Please wait a moment.", code: "RATE_LIMITED" },

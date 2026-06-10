@@ -8,14 +8,21 @@ export function getSummaryPrompt(text, style = "executive") {
     academic: `Write a formal academic summary covering: main thesis/argument, methodology (if applicable), key findings, and implications. Use formal academic tone.`,
   };
 
+  // Only accept known styles. Interpolating an arbitrary user-supplied string
+  // into the prompt would allow prompt injection (e.g. instructions hidden in
+  // the "style" value).
+  const safeStyle = Object.prototype.hasOwnProperty.call(styleInstructions, style)
+    ? style
+    : "executive";
+
   return {
     system: `You are a document analysis expert. Respond ONLY with valid JSON — no markdown, no code fences, just raw JSON.
 Schema: {"summary": string, "keyPoints": string[], "wordCount": number}
 - summary: the formatted summary text
 - keyPoints: 3-5 key topics or themes as short strings
 - wordCount: approximate word count of the original document`,
-    userMessage: `Summarize this document using the "${style}" style.
-Style instruction: ${styleInstructions[style] || styleInstructions.executive}
+    userMessage: `Summarize this document using the "${safeStyle}" style.
+Style instruction: ${styleInstructions[safeStyle]}
 
 Document:
 ${text}`,
