@@ -25,9 +25,12 @@ const PORT = process.env.PORT || 3001;
 const isProd = process.env.NODE_ENV === "production";
 
 app.use(helmet({ contentSecurityPolicy: isProd }));
+const devOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(",")
+  : ["http://localhost:5173", "http://127.0.0.1:5173"];
 app.use(
   cors({
-    origin: isProd ? false : ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: isProd ? false : devOrigins,
     credentials: true,
   })
 );
