@@ -20,7 +20,12 @@ export function saveToHistory(document) {
   } catch {
     // localStorage full — remove oldest and retry
     const trimmed = updated.slice(0, MAX_ITEMS / 2);
-    try { localStorage.setItem(KEY, JSON.stringify(trimmed)); } catch {}
+    try {
+      localStorage.setItem(KEY, JSON.stringify(trimmed));
+    } catch (e) {
+      console.warn("Could not save document history to localStorage:", e);
+      return null;
+    }
   }
   return entry;
 }

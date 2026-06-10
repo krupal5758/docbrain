@@ -11,14 +11,26 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { uploadLimiter, analyzeLimiter, chatLimiter } from "./middleware/rateLimiter.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Fail fast on missing required config instead of crashing on the first API call.
+if (!process.env.GEMINI_API_KEY) {
+  console.error(
+    "[config] GEMINI_API_KEY is not set. Add it to server/.env before starting."
+  );
+  process.exit(1);
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const isProd = process.env.NODE_ENV === "production";
 
 app.use(helmet({ contentSecurityPolicy: isProd }));
+const devOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(",")
+  : ["http://localhost:5173", "http://127.0.0.1:5173"];
 app.use(
   cors({
-    origin: isProd ? false : ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: isProd ? false : devOrigins,
     credentials: true,
   })
 );

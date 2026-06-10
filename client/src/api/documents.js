@@ -19,11 +19,3 @@ export async function analyzeDocument(text, analysisType, options = {}) {
   return data;
 }
 
-export async function chatWithDocument(text, question, history = []) {
-  const response = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, question, history }),
-  });
-  return response;
-}

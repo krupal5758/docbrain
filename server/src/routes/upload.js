@@ -43,7 +43,14 @@ router.post("/", (req, res, next) => {
     });
   } else {
     // JSON body — pasted text
-    const { text, filename = "pasted-text.txt" } = req.body;
+    const { text } = req.body;
+    // Sanitize the client-supplied filename: it's echoed back in metadata and
+    // later stored/displayed by the frontend, so strip path separators and
+    // control characters and cap the length.
+    const rawFilename = typeof req.body.filename === "string" ? req.body.filename : "";
+    const filename =
+      rawFilename.replace(/[/\\]/g, "_").replace(/[\x00-\x1f]/g, "").trim().slice(0, 255) ||
+      "pasted-text.txt";
 
     if (!text || typeof text !== "string" || text.trim().length === 0) {
       return res.status(400).json({ error: { message: "text field is required.", code: "MISSING_TEXT" } });

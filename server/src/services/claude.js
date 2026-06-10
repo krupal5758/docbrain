@@ -20,7 +20,7 @@ const MAX_TOKENS_BY_TYPE = {
   conceptMap: 2048,
 };
 
-function parseJson(raw) {
+export function parseJson(raw) {
   const clean = (typeof raw === "string" ? raw : "").trim();
 
   // 1. Direct parse
@@ -51,7 +51,11 @@ async function withRetry(fn, maxAttempts = 3) {
     } catch (err) {
       lastErr = err;
       const msg = err.message || "";
+      // Prefer the structured status code; fall back to message matching for
+      // SDK errors that don't carry one.
       const isRetryable =
+        err.status === 503 ||
+        err.status === 529 ||
         msg.includes("503") ||
         msg.includes("529") ||
         msg.includes("overloaded") ||

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useDocument } from "./useDocument.js";
 
 export function useChat() {
@@ -6,10 +6,21 @@ export function useChat() {
   const [messages, setMessages] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
+  const abortRef = useRef(null);
+
+  // Abort any in-flight stream when the component unmounts so the fetch
+  // doesn't keep updating unmounted state.
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
 
   const sendMessage = useCallback(
     async (question) => {
       if (!text || !question.trim() || isStreaming) return;
+
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       const history = messages.map((m) => ({ role: m.role, content: m.content }));
       const userMsg = { role: "user", content: question, id: Date.now() };
@@ -24,10 +35,14 @@ export function useChat() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text, question, history }),
+          signal: controller.signal,
         });
 
         if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
+        }
+        if (!response.body) {
+          throw new Error("The server returned an empty response.");
         }
 
         const reader = response.body.getReader();
@@ -61,12 +76,16 @@ export function useChat() {
               } else if (parsed.type === "error") {
                 setError(parsed.message);
               }
-            } catch {}
+            } catch (e) {
+              console.warn("Failed to parse SSE line:", line, e);
+            }
           }
         }
       } catch (err) {
-        setError(err.message);
-        setMessages((prev) => prev.slice(0, -1)); // Remove empty assistant message
+        if (err.name !== "AbortError") {
+          setError(err.message);
+          setMessages((prev) => prev.slice(0, -1)); // Remove empty assistant message
+        }
       } finally {
         setIsStreaming(false);
       }

@@ -12,7 +12,11 @@ apiClient.interceptors.response.use(
       error.response?.data?.error?.message ||
       error.message ||
       "An unexpected error occurred.";
-    return Promise.reject(new Error(message));
+    const wrapped = new Error(message);
+    wrapped.status = error.response?.status;
+    wrapped.code = error.response?.data?.error?.code;
+    wrapped.cause = error;
+    return Promise.reject(wrapped);
   }
 );
 
