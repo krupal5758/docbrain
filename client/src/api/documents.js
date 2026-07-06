@@ -1,4 +1,4 @@
-import apiClient from "./client.js";
+import apiClient, { getAccessCode } from "./client.js";
 
 export async function uploadFile(file) {
   const formData = new FormData();
@@ -20,9 +20,12 @@ export async function analyzeDocument(text, analysisType, options = {}) {
 }
 
 export async function chatWithDocument(text, question, history = []) {
+  const headers = { "Content-Type": "application/json" };
+  const code = getAccessCode();
+  if (code) headers["x-access-code"] = code;
   const response = await fetch("/api/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ text, question, history }),
   });
   return response;

@@ -1,5 +1,5 @@
-import express from "express";
-import { analyzeDocument } from "../services/claude.js";
+﻿import express from "express";
+import { analyzeDocument } from "../services/gemini.js";
 import { validateAnalysisInput } from "../middleware/validation.js";
 
 const router = express.Router();

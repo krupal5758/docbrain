@@ -1,5 +1,5 @@
-import express from "express";
-import { streamChat } from "../services/claude.js";
+﻿import express from "express";
+import { streamChat } from "../services/gemini.js";
 
 const router = express.Router();
 
