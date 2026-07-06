@@ -58,6 +58,10 @@ Open [http://localhost:5173](http://localhost:5173).
 GEMINI_API_KEY=your_key_here
 PORT=3001
 NODE_ENV=development
+# Optional: require a shared access code on all API requests.
+# Recommended for public deploys — without it anyone who finds the URL
+# can use your Gemini quota. The UI prompts for the code on first use.
+ACCESS_CODE=
 ```
 
 ## Project Structure
