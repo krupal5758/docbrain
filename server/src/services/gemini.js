@@ -20,7 +20,7 @@ const MAX_TOKENS_BY_TYPE = {
   conceptMap: 2048,
 };
 
-function parseJson(raw) {
+export function parseJson(raw) {
   const clean = (typeof raw === "string" ? raw : "").trim();
 
   // 1. Direct parse
@@ -32,11 +32,13 @@ function parseJson(raw) {
     try { return JSON.parse(fenceMatch[1].trim()); } catch {}
   }
 
-  // 3. Find the first outermost { ... } block
-  const start = clean.indexOf("{");
-  const end = clean.lastIndexOf("}");
-  if (start !== -1 && end > start) {
-    try { return JSON.parse(clean.slice(start, end + 1)); } catch {}
+  // 3. Find the first outermost { ... } or [ ... ] block
+  for (const [open, close] of [["{", "}"], ["[", "]"]]) {
+    const start = clean.indexOf(open);
+    const end = clean.lastIndexOf(close);
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(clean.slice(start, end + 1)); } catch {}
+    }
   }
 
   throw new Error("Model returned non-JSON output. Please try again.");
